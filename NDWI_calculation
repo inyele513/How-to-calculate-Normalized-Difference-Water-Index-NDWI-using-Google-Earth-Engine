@@ -1,0 +1,37 @@
+// MARSABIT SENTINEL IMAGES FOR DRY SEASON
+
+var dry_season = sentinel2.filterBounds(ROI)
+                          .filterDate('2023-01-01', '2023-03-15')
+                         //.filterMetadata('CLOUDY_PIXEL_PERCENTAGE', 'less_than', 1)
+                          .sort('CLOUDY_PIXEL_PERCENTAGE', false)
+                          .mosaic()
+                          .clip(ROI)
+//print (image_dry.size())                          
+Map.addLayer(dry_season, imageVisParam, 'dry_season')
+Map.centerObject(ROI,8)
+
+
+
+//MARSABIT SENTINEL IMAGES FOR WET SEASONS
+var wet_season = sentinel2.filterBounds(ROI)
+                          .filterDate('2023-04-01', '2023-05-30')
+                          //.filterMetadata('CLOUDY_PIXEL_PERCENTAGE', 'less_than', 10)
+                          .sort('CLOUDY_PIXEL_PERCENTAGE', false)
+                          .mosaic()
+                          .clip(ROI)
+
+//print (wet_season.size())                          
+Map.addLayer(wet_season, imageVisParam2, 'wet_season')
+Map.centerObject(ROI,8)
+
+
+//CALCULATE NDWI FOR BOTH WET AND DRY SEASON
+
+// NDWI = Green - NIR/ Green + NIR Bands
+
+var ndwi_dry= dry_season.normalizedDifference(['B3','B8'])
+
+var ndwi_wet= wet_season.normalizedDifference(['B3','B8'])
+
+Map.addLayer (ndwi_dry,{min: -1, max: 1, palette:['red', 'yellow', 'green', 'blue']}, 'NDWI DRY')
+Map.addLayer (ndwi_wet,{min: -1, max: 1, palette:['red', 'yellow', 'green', 'blue']}, 'NDWI WET')
